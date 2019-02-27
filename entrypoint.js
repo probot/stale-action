@@ -16,23 +16,24 @@ tools.log.start('Stale action is booting up!')
 tools.log.pending('Retrieving Stale config from `.github/stale.yml`...')
 const config = tools.config('.github/stale.yml')
 
-async function main () {
-  if (tools.context.event === 'repository_dispatch') {
-    await markAndSweep(tools)
-  } else {
-    await unmark(tools)
-  }
+if (tools.context.event === 'repository_dispatch') {
+  const stale = new Stale(tools, config)
+  const type = tools.context.payload.issue ? 'issues' : 'pulls'
+  stale.markAndSweep(type).then(() => {
+    tools.log.succeed('Done with mark and sweep!')
+  })
+} else {
+  unmark(tools).then(() => {
+    tools.log.succeed('Unmarked a thing')
+  })
 }
 
-async function markAndSweep (tools) {
-  return new Stale(tools, config)
-}
-
-async function unmark (tools) {
+async function unmark(tools) {
   const stale = new Stale(tools, config)
   if (!isBot(tools.context)) {
-    let issue = tools.context.payload.issue || tools.context.payload.pull_request
-    const type = context.payload.issue ? 'issues' : 'pulls'
+    let issue =
+      tools.context.payload.issue || tools.context.payload.pull_request
+    const type = tools.context.payload.issue ? 'issues' : 'pulls'
 
     // Some payloads don't include labels
     if (!issue.labels) {
@@ -43,17 +44,20 @@ async function unmark (tools) {
       }
     }
 
-    const staleLabelAdded = tools.context.payload.action === 'labeled' &&
+    const staleLabelAdded =
+      tools.context.payload.action === 'labeled' &&
       tools.context.payload.label.name === stale.config.staleLabel
 
-    if (stale.hasStaleLabel(type, issue) && issue.state !== 'closed' && !staleLabelAdded) {
+    if (
+      stale.hasStaleLabel(type, issue) &&
+      issue.state !== 'closed' &&
+      !staleLabelAdded
+    ) {
       stale.unmark(type, issue)
     }
   }
 }
 
-function isBot (context) {
+function isBot(context) {
   return context.payload.sender.type === 'Bot'
 }
-
-main()
