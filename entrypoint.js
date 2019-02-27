@@ -40,7 +40,7 @@ async function unmark(tools) {
       try {
         issue = (await tools.github.issues.get(tools.context.issue())).data
       } catch (error) {
-        tools.log.info('Issue not found')
+        tools.exit.failure('Issue not found')
       }
     }
 
