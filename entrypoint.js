@@ -16,10 +16,12 @@ tools.log.start('Stale action is booting up!')
 tools.log.pending('Retrieving Stale config from `.github/stale.yml`...')
 const config = tools.config('.github/stale.yml')
 
-if (tools.context.event === 'repository_dispatch') {
-  await markAndSweep(tools)
-} else {
-  await unmark(tools)
+async function main () {
+  if (tools.context.event === 'repository_dispatch') {
+    await markAndSweep(tools)
+  } else {
+    await unmark(tools)
+  }
 }
 
 async function markAndSweep (tools) {
@@ -53,3 +55,5 @@ async function unmark (tools) {
 function isBot (context) {
   return context.payload.sender.type === 'Bot'
 }
+
+main()
