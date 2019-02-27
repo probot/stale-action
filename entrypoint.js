@@ -20,11 +20,11 @@ if (tools.context.event === 'repository_dispatch') {
   const stale = new Stale(tools, config)
   const type = tools.context.payload.issue ? 'issues' : 'pulls'
   stale.markAndSweep(type).then(() => {
-    tools.log.succeed('Done with mark and sweep!')
+    tools.log.success('Done with mark and sweep!')
   })
 } else {
   unmark(tools).then(() => {
-    tools.log.succeed('Unmarked a thing')
+    tools.log.success('Unmarked a thing')
   })
 }
 
