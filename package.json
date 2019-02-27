@@ -1,0 +1,8 @@
+{
+  "name": "stale-action",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "actions-toolkit": "^1.5.0"
+  }
+}
