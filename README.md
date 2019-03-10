@@ -72,7 +72,7 @@ limitPerRun: 30
 #     - confirmed
 ```
 
-TheA `main.workflow` file contains multiple `on` events. The main one that triggers a scan for stale content is `on = "repository_dispatch"`. The others are events that listen for activity on issues and pull requests to unmark them if they were previously marked as stale.
+The `main.workflow` file contains multiple `on` events. The main one that triggers a scan for stale content is `on = "repository_dispatch"`. The others are events that listen for activity on issues and pull requests to unmark them if they were previously marked as stale.
 
 ```hcl
 workflow "Run Stale!" {
