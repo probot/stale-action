@@ -61,6 +61,16 @@ describe('handle-stale-action', () => {
     expect(tools.log.success.mock.calls).toMatchSnapshot()
   })
 
+  it('works with pull requests as well', async () => {
+    const tools = mockToolkit('pull-request')
+    tools.context.event = 'pull_request'
+
+    await runAction(tools)
+
+    expect(tools.log.success).toBeCalledWith('Unmarked a thing')
+    expect(tools.log.success.mock.calls).toMatchSnapshot()
+  })
+
   it('Handles issue payloads without labels', async done => {
     const tools = mockToolkit('no-issue-labels')
     tools.context.event = 'issue_comment'
@@ -105,3 +115,5 @@ describe('handle-stale-action', () => {
     await done()
   })
 })
+
+module.exports = mockToolkit

@@ -15,3 +15,11 @@ Array [
   ],
 ]
 `;
+
+exports[`handle-stale-action works with pull requests as well 1`] = `
+Array [
+  Array [
+    "Unmarked a thing",
+  ],
+]
+`;
