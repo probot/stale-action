@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`handle-stale-action exits success on a successful run 1`] = `
+Array [
+  Array [
+    "Done with mark and sweep!",
+  ],
+]
+`;
+
+exports[`handle-stale-action unmarks on new issue comments 1`] = `
+Array [
+  Array [
+    "Unmarked a thing",
+  ],
+]
+`;
