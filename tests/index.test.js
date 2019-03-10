@@ -2,12 +2,12 @@ const path = require('path')
 const runAction = require('..')
 const { Toolkit } = require('actions-toolkit')
 
-function mockToolkit (event, workspace = 'workspace') {
+function mockToolkit (event, fixture, workspace = 'workspace') {
   // Load the JSON event
   process.env.GITHUB_EVENT_PATH = path.join(
     __dirname,
     'fixtures',
-    `${event}.json`
+    `${fixture}.json`
   )
 
   // Load the workspace file
@@ -16,6 +16,8 @@ function mockToolkit (event, workspace = 'workspace') {
     'fixtures',
     workspace
   )
+
+  process.env.GITHUB_EVENT_NAME = event
 
   Toolkit.prototype.warnForMissingEnvVars = jest.fn()
 
@@ -40,8 +42,7 @@ describe('handle-stale-action', () => {
 
   it('exits success on a successful run', async () => {
     const mockMarkAndSweep = require('../lib/stale').prototype.markAndSweep = jest.fn().mockResolvedValue(true)
-    const tools = mockToolkit('repository-dispatch')
-    tools.context.event = 'repository_dispatch'
+    const tools = mockToolkit('repository_dispatch', 'repository-dispatch')
 
     runAction(tools)
 
@@ -52,8 +53,7 @@ describe('handle-stale-action', () => {
   })
 
   it('unmarks on new issue comments', async () => {
-    const tools = mockToolkit('issue-comment')
-    tools.context.event = 'issue_comment'
+    const tools = mockToolkit('issue_comment', 'issue-comment')
 
     await runAction(tools)
 
@@ -62,8 +62,7 @@ describe('handle-stale-action', () => {
   })
 
   it('works with pull requests as well', async () => {
-    const tools = mockToolkit('pull-request')
-    tools.context.event = 'pull_request'
+    const tools = mockToolkit('pull_request', 'pull-request')
 
     await runAction(tools)
 
@@ -72,8 +71,7 @@ describe('handle-stale-action', () => {
   })
 
   it('Handles issue payloads without labels', async done => {
-    const tools = mockToolkit('no-issue-labels')
-    tools.context.event = 'issue_comment'
+    const tools = mockToolkit('issue_comment', 'no-issue-labels')
     tools.github = {
       issues: {
         get: jest.fn().mockResolvedValue({
@@ -89,8 +87,7 @@ describe('handle-stale-action', () => {
   })
 
   it('Exits if unable to find issues with labels', async done => {
-    const tools = mockToolkit('no-issue-labels')
-    tools.context.event = 'issue_comment'
+    const tools = mockToolkit('issue_comment', 'no-issue-labels')
     tools.github = {
       issues: {
         get: jest.fn().mockRejectedValue({
@@ -105,8 +102,7 @@ describe('handle-stale-action', () => {
   })
 
   it('Exits early if sender is a bot', async done => {
-    const tools = mockToolkit('bot-sender')
-    tools.context.event = 'issue_comment'
+    const tools = mockToolkit('issue_comment', 'bot-sender')
     tools.exit.neutral = jest.fn()
 
     await runAction(tools)

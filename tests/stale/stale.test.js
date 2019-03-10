@@ -14,8 +14,7 @@ describe('stale', () => {
     const issueAction = jest
       .fn()
       .mockImplementation(() => Promise.resolve(notFoundError))
-    tools = mockToolkit('repository-dispatch')
-    tools.context.event = 'repository_dispatch'
+    tools = mockToolkit('repository_dispatch', 'repository-dispatch')
 
     // Mock out the GitHub API
     tools.github = {
