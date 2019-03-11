@@ -182,4 +182,30 @@ describe('stale', () => {
     await stale.markAndSweep('pulls')
     expect(stale.getClosable).not.toHaveBeenCalled()
   })
+
+  it('reports lines that are invalid', async () => {
+    const createErrorAnnotation = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve())
+    tools = mockToolkit(
+      'repository_dispatch',
+      'repository-dispatch',
+      'workspace-bad-yaml'
+    )
+    tools.github = {
+      checks: {
+        create: jest
+          .fn()
+          .mockImplementation(() => Promise.resolve(notFoundError))
+      }
+    }
+
+    tools.log.fatal = jest.fn()
+    tools.exit.failure = jest.fn()
+    const config = tools.config('.github/stale.yml')
+    const stale = new Stale(tools, config)
+    expect(stale).toBeDefined()
+    await createErrorAnnotation()
+    expect(tools.log.fatal).toBeCalledWith('Sent annotation for invalid config!')
+  })
 })

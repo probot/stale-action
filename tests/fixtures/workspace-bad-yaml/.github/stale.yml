@@ -1,0 +1,3 @@
+limitPerRun: 100 
+daysUntilStale: 'woops'
+staleLabel: 'wontfix'
