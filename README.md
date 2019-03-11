@@ -1,3 +1,5 @@
+![Build Status](https://action-badges.now.sh/probot/stale-action)
+
 # Stale-Action
 
 This action is adapted from Probot's [Stale app](https://github.com/probot/stale), built by [@bkeepers](https://github.com/bkeepers), which itself was onspired by @parkr's [auto-reply](https://github.com/parkr/auto-reply#optional-mark-and-sweep-stale-issues) bot that runs @jekyllbot.
