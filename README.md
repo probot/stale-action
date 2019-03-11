@@ -117,6 +117,16 @@ action "probot/stale-action@master - PR" {
 }
 ```
 
+The `repository_dispatch` event can be triggered manually whenever you want to kick off a scan. An example with `curl` would look something like this, and require a token with write access to the repo you want to trigger:
+
+```sh
+curl -X POST https://api.github.com/repos/:owner/:repo/dispatches \
+  -H 'Accept: application/vnd.github.everest-preview+json'
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{ "event_type": "stale" }'
+```
+
 There are a number of ways to setup a scheduled trigger for the repository dispatch event. The easiest one I found was an [Azure job scheduler](https://azure.microsoft.com/en-us/services/scheduler/) setup to fire the authenticated HTTP trigger once a day.
 
 If you use Azure and want to deploy something similar, here's the important bits you'll need in an Azure Resource Group Template. For the Authorization token you'll need to use a Personal Access Token that has write access to the repository you want to trigger:
