@@ -9,7 +9,7 @@ It uses [Actions-Toolkit](https://github.com/JasonEtco/actions-toolkit) by [@Jas
 ## Usage
 
 1. Create `.github/stale.yml` based on the following template.
-2. Create a `main.workflow` based off the [`example.workflow`](./example.workflow) in this repository, which will start a scan in response to a `repository_dispatch` event.
+2. Create a `main.workflow` based off the [`example.workflow`](./example.workflow) in this repository, which will start a scan in response to a [`repository_dispatch`](https://developer.github.com/actions/creating-workflows/triggering-a-repositorydispatch-webhook/) event.
 
 A `.github/stale.yml` file is required to enable the plugin. The file can be empty, or it can override any of these default settings:
 
@@ -74,6 +74,15 @@ limitPerRun: 30
 #     - confirmed
 ```
 
+### YAML Validation
+Thanks to the ability to integrate an Action with [Check Runs](https://developer.github.com/v3/checks/runs/), this also makes use of [Joi](https://github.com/hapijs/joi) and [line-column](https://github.com/io-monad/line-column) to validate your YAML file against the [schema](./lib/schema.js). If one of the values in your `stale.yml` values is invalid, you should get an annotation on the commit that looks something like this:
+
+![image](https://user-images.githubusercontent.com/13207348/54105958-eb638e80-4391-11e9-96b9-192ba69cfd52.png)
+
+Right now it will only send annotations for values that don't match the schema. If you have bad YAML syntax, the config will fail to load and you should see relevant errors in the Actions logs.
+
+
+### Creating a `.workflow` file
 The `main.workflow` file contains multiple `on` events. The main one that triggers a scan for stale content is `on = "repository_dispatch"`. The others are events that listen for activity on issues and pull requests to unmark them if they were previously marked as stale.
 
 ```hcl
@@ -107,6 +116,52 @@ action "probot/stale-action@master - PR" {
   secrets = ["GITHUB_TOKEN"]
 }
 ```
+
+There are a number of ways to setup a scheduled trigger for the repository dispatch event. The easiest one I found was an [Azure job scheduler](https://azure.microsoft.com/en-us/services/scheduler/) setup to fire the authenticated HTTP trigger once a day.
+
+If you use Azure and want to deploy something similar, here's the important bits you'll need in an Azure Resource Group Template. For the Authorization token you'll need to use a Personal Access Token that has write access to the repository you want to trigger:
+
+<details>
+
+```json
+{
+  "comments": "Generalized from resource...",
+  "type": "Microsoft.Scheduler/jobCollections/jobs",
+  "name": "Stale Action HTTP trigger",
+  "apiVersion": "2016-03-01",
+  "scale": null,
+  "properties": {
+      "startTime": "2019-02-27T07:27:30.678Z",
+      "action": {
+          "request": {
+              "uri": "https://api.github.com/repos/:owner/:repo/dispatches",
+              "method": "POST",
+              "headers": {
+                  "Authorization": "Bearer <token>",
+                  "Accept": "application/vnd.github.everest-preview+json",
+                  "Content-Type": "application/json",
+                  "User-Agent": "Stale from Azure"
+              },
+              "body": "{\n  \"event_type\": \"stale\"\n}"
+          },
+          "type": "HTTPS",
+          "retryPolicy": {
+              "retryType": "fixed",
+              "retryInterval": "30.00:00:00",
+              "retryCount": 3
+          }
+      },
+      "recurrence": {
+          "frequency": "day",
+          "count": 7,
+          "interval": 1
+      },
+      "state": "completed"
+  }
+}
+```
+
+</details>
 
 ## License
 
