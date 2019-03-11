@@ -1,6 +1,9 @@
 const { Toolkit } = require('actions-toolkit')
 const Stale = require('./lib/stale')
 
+/**
+ * @param {import('actions-toolkit').Toolkit} tools
+ */
 module.exports = async tools => {
   if (!tools) {
     tools = new Toolkit({
@@ -28,7 +31,9 @@ module.exports = async tools => {
     })
   } else {
     return unmark(tools).then(() => {
-      tools.log.success('Unmarked a thing')
+      tools.exit.success()
+    }).catch(err => {
+      tools.exit.failure(err)
     })
   }
 
