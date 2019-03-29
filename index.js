@@ -21,21 +21,12 @@ module.exports = async tools => {
   tools.log.star(`Received ${tools.context.event}!`)
   tools.log.start('Stale action is booting up!')
   tools.log.pending('Retrieving Stale config from `.github/stale.yml`...')
-  const config = tools.config('.github/stale.yml')
+  const config = buildConfig(tools)
 
-  const sweepEvent = (event) => {
-    switch (event) {
-      case 'repository_dispatch':
-        return true
-      case 'schedule':
-        return true
-      default:
-        return false
-    }
-  }
-  if (sweepEvent(tools.context.event)) {
+  if (tools.context.event === 'repository_dispatch') {
     const stale = new Stale(tools, config)
-    const type = tools.context.payload.issue ? 'issues' : 'pulls'
+    const type = tools.arguments._[0] ||
+    (tools.context.payload.issue ? 'issues' : 'pulls')
     stale.markAndSweep(type).then(() => {
       tools.log.success('Done with mark and sweep!')
     })
@@ -79,6 +70,22 @@ module.exports = async tools => {
   }
 }
 
+function buildConfig (tools) {
+  const config = tools.config('.github/stale.yml')
+
+  if (tools.arguments.daysUntilClose) {
+    config.daysUntilClose = tools.arguments.daysUntilClose
+  }
+
+  if (tools.arguments.daysUntilStale) {
+    config.daysUntilStale = tools.arguments.daysUntilStale
+  }
+
+  return config
+}
+
 function isBot (context) {
   return context.payload.sender.type === 'Bot'
 }
+
+module.exports.buildConfig = buildConfig

@@ -111,6 +111,21 @@ describe('handle-stale-action', () => {
     expect(tools.exit.neutral).toBeCalled()
     await done()
   })
+
+  it('supports arguments for options', async () => {
+    const mockMarkAndSweep = require('../lib/stale').prototype.markAndSweep = jest.fn().mockResolvedValue(true)
+    const { buildConfig } = require('../')
+
+    const tools = mockToolkit('repository_dispatch', 'repository-dispatch')
+    tools.arguments = { _: ['issues'], daysUntilClose: 25 }
+
+    const config = buildConfig(tools)
+
+    await runAction(tools)
+
+    expect(config.daysUntilClose).toBe(25)
+    expect(mockMarkAndSweep).toBeCalledWith('issues')
+  })
 })
 
 module.exports = mockToolkit

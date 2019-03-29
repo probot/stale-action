@@ -11,7 +11,26 @@ It uses [Actions-Toolkit](https://github.com/JasonEtco/actions-toolkit) by [@Jas
 1. Create `.github/stale.yml` based on the following template.
 2. Create a `main.workflow` based off the [`example.workflow`](./example.workflow) in this repository, which will start a scan in response to a [`repository_dispatch`](https://developer.github.com/actions/creating-workflows/triggering-a-repositorydispatch-webhook/) event.
 
-A `.github/stale.yml` file is required to enable the plugin. The file can be empty, or it can override any of these default settings:
+To customize how the action will run, you can provide options in one of the following ways:
+
+#### Command line arguments
+Any of the supported options below can be passed as command line flags directly in the Actions editor. As an example, you can configure your workflow as follows:
+
+```hcl
+workflow "Run Stale!" {
+  on = "repository_dispatch"
+  resolves = ["probot/stale-action"]
+}
+
+action "probot/stale-action" {
+  uses = "probot/stale-action@master"
+  secrets = ["GITHUB_TOKEN"]
+  args = "type:issues --daysUntilStale 30 --daysUntilClose 60 --staleLabel wontfix"
+}
+```
+
+#### A `.github/stale.yml` file in your repository.
+The file can be empty, or it can override any of these default settings:
 
 ```yml
 # Configuration for probot-stale - https://github.com/probot/stale
