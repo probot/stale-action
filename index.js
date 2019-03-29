@@ -23,7 +23,17 @@ module.exports = async tools => {
   tools.log.pending('Retrieving Stale config from `.github/stale.yml`...')
   const config = tools.config('.github/stale.yml')
 
-  if (tools.context.event === 'repository_dispatch') {
+  const sweepEvent = (event) => {
+    switch (event) {
+      case 'repository_dispatch':
+        return true
+      case 'schedule':
+        return true
+      default:
+        return false
+    }
+  }
+  if (sweepEvent(tools.context.event)) {
     const stale = new Stale(tools, config)
     const type = tools.context.payload.issue ? 'issues' : 'pulls'
     stale.markAndSweep(type).then(() => {
