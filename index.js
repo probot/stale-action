@@ -13,7 +13,8 @@ module.exports = async tools => {
         'pull_request',
         'pull_request_review',
         'pull_request_review_comment',
-        'repository_dispatch'
+        'repository_dispatch',
+        'schedule'
       ]
     })
   }
@@ -26,13 +27,13 @@ module.exports = async tools => {
   const sweepEvent = (event) => {
     switch (event) {
       case 'repository_dispatch':
-        return true
       case 'schedule':
         return true
       default:
         return false
     }
   }
+
   if (sweepEvent(tools.context.event)) {
     const stale = new Stale(tools, config)
     const type = tools.context.payload.issue ? 'issues' : 'pulls'

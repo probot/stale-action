@@ -8,6 +8,14 @@ Array [
 ]
 `;
 
+exports[`handle-stale-action supports the schedule event 1`] = `
+Array [
+  Array [
+    "Done with mark and sweep!",
+  ],
+]
+`;
+
 exports[`handle-stale-action unmarks on new issue comments 1`] = `
 Array [
   Array [

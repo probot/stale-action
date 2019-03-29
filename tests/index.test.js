@@ -53,6 +53,18 @@ describe('handle-stale-action', () => {
     expect(tools.log.success.mock.calls).toMatchSnapshot()
   })
 
+  it('supports the schedule event', async () => {
+    const mockMarkAndSweep = require('../lib/stale').prototype.markAndSweep = jest.fn().mockResolvedValue(true)
+    const tools = mockToolkit('schedule', 'repository-dispatch')
+
+    await runAction(tools)
+
+    await mockMarkAndSweep()
+
+    expect(tools.log.success).toBeCalled()
+    expect(tools.log.success.mock.calls).toMatchSnapshot()
+  })
+
   it('unmarks on new issue comments', async () => {
     const tools = mockToolkit('issue_comment', 'issue-comment')
 
