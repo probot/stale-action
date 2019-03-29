@@ -11,7 +11,10 @@ Array [
 exports[`handle-stale-action unmarks on new issue comments 1`] = `
 Array [
   Array [
-    "Unmarked a thing",
+    Object {
+      "message": "octo-org/octo-repo#123 was unmarked.",
+      "prefix": "[Stale]",
+    },
   ],
 ]
 `;
@@ -19,7 +22,10 @@ Array [
 exports[`handle-stale-action works with pull requests as well 1`] = `
 Array [
   Array [
-    "Unmarked a thing",
+    Object {
+      "message": "octo-org/octo-repo#234 was unmarked.",
+      "prefix": "[Stale]",
+    },
   ],
 ]
 `;

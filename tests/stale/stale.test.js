@@ -37,9 +37,10 @@ describe('stale', () => {
     }
 
     tools.exit.failure = jest.fn()
+    tools.exit.success = jest.fn()
   })
 
-  test('should limit the number of actions it takes each run', async () => {
+  it('should limit the number of actions it takes each run', async () => {
     const staleLabel = 'stale'
     const limitPerRun = 30
 

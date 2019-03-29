@@ -1,6 +1,7 @@
 const path = require('path')
 const runAction = require('..')
 const { Toolkit } = require('actions-toolkit')
+process.exit = jest.fn()
 
 function mockToolkit (event, fixture, workspace = 'workspace') {
   // Load the JSON event
@@ -57,8 +58,8 @@ describe('handle-stale-action', () => {
 
     await runAction(tools)
 
-    expect(tools.log.success).toBeCalledWith('Unmarked a thing')
-    expect(tools.log.success.mock.calls).toMatchSnapshot()
+    expect(tools.log.complete).toBeCalled()
+    expect(tools.log.complete.mock.calls).toMatchSnapshot()
   })
 
   it('works with pull requests as well', async () => {
@@ -66,8 +67,8 @@ describe('handle-stale-action', () => {
 
     await runAction(tools)
 
-    expect(tools.log.success).toBeCalledWith('Unmarked a thing')
-    expect(tools.log.success.mock.calls).toMatchSnapshot()
+    expect(tools.log.complete).toBeCalled()
+    expect(tools.log.complete.mock.calls).toMatchSnapshot()
   })
 
   it('Handles issue payloads without labels', async done => {
