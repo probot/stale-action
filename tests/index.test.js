@@ -1,7 +1,5 @@
 const path = require('path')
-const runAction = require('..')
 const { Toolkit } = require('actions-toolkit')
-process.exit = jest.fn()
 
 function mockToolkit (event, fixture, workspace = 'workspace') {
   // Load the JSON event
@@ -22,20 +20,41 @@ function mockToolkit (event, fixture, workspace = 'workspace') {
 
   Toolkit.prototype.warnForMissingEnvVars = jest.fn()
 
-  const tools = new Toolkit()
+  const tools = new Toolkit({
+    logger: {
+      warn: jest.fn(),
+      info: jest.fn(),
+      error: jest.fn(),
+      star: jest.fn(),
+      start: jest.fn(),
+      pending: jest.fn(),
+      success: jest.fn(),
+      complete: jest.fn()
+    }
+  })
+
+  tools.exit = {
+    success: jest.fn(),
+    failure: jest.fn(),
+    neutral: jest.fn()
+  }
+
   tools.github = {
     issues: {
       createComment: jest.fn().mockResolvedValue(),
       removeLabel: jest.fn().mockResolvedValue()
     }
   }
-  tools.log.success = jest.fn()
-  tools.log.complete = jest.fn()
+
   return tools
 }
 
 describe('handle-stale-action', () => {
+  let runAction
   beforeEach(() => {
+    Toolkit.run = jest.fn(fn => { runAction = fn })
+    require('..')
+
     Object.assign(process.env, {
       GITHUB_WORKSPACE: path.join(__dirname, 'fixtures', 'workspace')
     })

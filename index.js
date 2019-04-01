@@ -1,24 +1,7 @@
 const { Toolkit } = require('actions-toolkit')
 const Stale = require('./lib/stale')
 
-/**
- * @param {import('actions-toolkit').Toolkit} tools
- */
-module.exports = async tools => {
-  if (!tools) {
-    tools = new Toolkit({
-      event: [
-        'issue_comment',
-        'issues',
-        'pull_request',
-        'pull_request_review',
-        'pull_request_review_comment',
-        'repository_dispatch'
-      ],
-      secrets: ['GITHUB_TOKEN']
-    })
-  }
-
+Toolkit.run(async tools => {
   tools.log.star(`Received ${tools.context.event}!`)
   tools.log.start('Stale action is booting up!')
   tools.log.pending('Retrieving Stale config from `.github/stale.yml`...')
@@ -68,7 +51,17 @@ module.exports = async tools => {
       return stale.unmark(type, issue)
     }
   }
-}
+}, {
+  event: [
+    'issue_comment',
+    'issues',
+    'pull_request',
+    'pull_request_review',
+    'pull_request_review_comment',
+    'repository_dispatch'
+  ],
+  secrets: ['GITHUB_TOKEN']
+})
 
 function isBot (context) {
   return context.payload.sender.type === 'Bot'
