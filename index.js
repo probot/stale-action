@@ -51,7 +51,7 @@ module.exports = async tools => {
     // Some payloads don't include labels
     if (!issue.labels) {
       try {
-        issue = (await tools.github.issues.get(tools.context.issue())).data
+        issue = (await tools.github.issues.get(tools.context.issue)).data
       } catch (error) {
         return tools.exit.failure('Issue not found')
       }
