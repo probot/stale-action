@@ -36,8 +36,7 @@ describe('stale', () => {
       }
     }
 
-    tools.exit.failure = jest.fn()
-    tools.exit.success = jest.fn()
+    process.env.GITHUB_REPOSITORY = 'octo-org/octo-repo'
   })
 
   it('should limit the number of actions it takes each run', async () => {

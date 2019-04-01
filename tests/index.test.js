@@ -18,6 +18,8 @@ function mockToolkit (event, fixture, workspace = 'workspace') {
 
   process.env.GITHUB_EVENT_NAME = event
 
+  process.env.GITHUB_REPOSITORY = 'octo-org/octo-repo'
+
   Toolkit.prototype.warnForMissingEnvVars = jest.fn()
 
   const tools = new Toolkit({
