@@ -14,7 +14,8 @@ module.exports = async tools => {
         'pull_request_review',
         'pull_request_review_comment',
         'repository_dispatch'
-      ]
+      ],
+      secrets: ['GITHUB_TOKEN']
     })
   }
 
