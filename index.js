@@ -1,7 +1,6 @@
 const { Toolkit } = require('actions-toolkit')
 const Stale = require('./lib/stale')
 
-
 Toolkit.run(async tools => {
   tools.log.star(`Received ${tools.context.event}!`)
   tools.log.start('Stale action is booting up!')
