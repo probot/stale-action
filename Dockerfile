@@ -28,4 +28,4 @@ RUN npm ci
 COPY . .
 
 # Run `node /entrypoint.js`
-ENTRYPOINT ["node", "/entrypoint.js"]
+ENTRYPOINT ["node", "/index.js"]
