@@ -66,11 +66,23 @@ describe('handle-stale-action', () => {
     const mockMarkAndSweep = require('../lib/stale').prototype.markAndSweep = jest.fn().mockResolvedValue(true)
     const tools = mockToolkit('repository_dispatch', 'repository-dispatch')
 
-    runAction(tools)
+    await runAction(tools)
 
     await mockMarkAndSweep()
 
-    expect(tools.log.success).toBeCalledWith('Done with mark and sweep!')
+    expect(tools.log.success).toBeCalled()
+    expect(tools.log.success.mock.calls).toMatchSnapshot()
+  })
+
+  it('supports the schedule event', async () => {
+    const mockMarkAndSweep = require('../lib/stale').prototype.markAndSweep = jest.fn().mockResolvedValue(true)
+    const tools = mockToolkit('schedule', 'repository-dispatch')
+
+    await runAction(tools)
+
+    await mockMarkAndSweep()
+
+    expect(tools.log.success).toBeCalled()
     expect(tools.log.success.mock.calls).toMatchSnapshot()
   })
 

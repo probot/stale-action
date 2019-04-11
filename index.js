@@ -7,7 +7,18 @@ Toolkit.run(async tools => {
   tools.log.pending('Retrieving Stale config from `.github/stale.yml`...')
   const config = tools.config('.github/stale.yml')
 
-  if (tools.context.event === 'repository_dispatch') {
+  const sweepEvent = (event) => {
+    switch (event) {
+      case 'repository_dispatch':
+      case 'schedule':
+        return true
+      default:
+        return false
+    }
+  }
+
+  if (sweepEvent(tools.context.event)) {
+    tools.log.info('Payload: ', tools.context.payload)
     const stale = new Stale(tools, config)
     const type = tools.context.payload.issue ? 'issues' : 'pulls'
     stale.markAndSweep(type).then(() => {
@@ -58,7 +69,8 @@ Toolkit.run(async tools => {
     'pull_request',
     'pull_request_review',
     'pull_request_review_comment',
-    'repository_dispatch'
+    'repository_dispatch',
+    'schedule'
   ],
   secrets: ['GITHUB_TOKEN']
 })
