@@ -18,6 +18,7 @@ Toolkit.run(async tools => {
   }
 
   if (sweepEvent(tools.context.event)) {
+    tools.log.info('Payload: ', tools.context.payload)
     const stale = new Stale(tools, config)
     const type = tools.context.payload.issue ? 'issues' : 'pulls'
     stale.markAndSweep(type).then(() => {
