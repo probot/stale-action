@@ -1,5 +1,5 @@
 workflow "Run Stale!" {
-  on = "repository_dispatch"
+  on = "schedule(28 23 * * *)"
   resolves = ["probot/stale-action@master"]
 }
 

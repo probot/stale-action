@@ -9,7 +9,7 @@ It uses [Actions-Toolkit](https://github.com/JasonEtco/actions-toolkit) by [@Jas
 ## Usage
 
 1. Create `.github/stale.yml` based on the following template.
-2. Create a `main.workflow` based off the [`example.workflow`](./example.workflow) in this repository, which will start a scan in response to a [`repository_dispatch`](https://developer.github.com/actions/creating-workflows/triggering-a-repositorydispatch-webhook/) event.
+2. Create a `main.workflow` based off the [`example.workflow`](./example.workflow) in this repository, which will start a scan in response to a [`schedule`](https://developer.github.com/actions/managing-workflows/workflow-configuration-options/#example-scheduled-workflow-block) event. This will schedule as can of your repository however often you specify using [CRON syntax](https://developer.github.com/actions/managing-workflows/creating-and-cancelling-a-workflow/#scheduling-a-workflow). The default schedule in the example will run every day at 12:00AM UTC `(0 0 * * *)`, but we recommend you run this at a time that's conveninet for you. The Actions UI will show the next two scheduled runs to help you gain confidence that the syntax translates to a good schedule.
 
 A `.github/stale.yml` file is required to enable the plugin. The file can be empty, or it can override any of these default settings:
 
@@ -117,7 +117,8 @@ action "probot/stale-action@master - PR" {
 }
 ```
 
-The `repository_dispatch` event can be triggered manually whenever you want to kick off a scan. An example with `curl` would look something like this, and require a token with write access to the repo you want to trigger:
+## Using with `repository_dispatch`
+If needed, the scan can also be triggered manually with a [`repository_dispatch`](https://developer.github.com/actions/managing-workflows/triggering-a-repositorydispatch-webhook/) event. An example with `curl` would look something like this, and requires a token with write access to the repo you want to scan (a `stale.yml` still needs to be present in the repository):
 
 ```sh
 curl -X POST https://api.github.com/repos/:owner/:repo/dispatches \
@@ -127,51 +128,7 @@ curl -X POST https://api.github.com/repos/:owner/:repo/dispatches \
   -d '{ "event_type": "stale" }'
 ```
 
-There are a number of ways to setup a scheduled trigger for the repository dispatch event. The easiest one I found was an [Azure job scheduler](https://azure.microsoft.com/en-us/services/scheduler/) setup to fire the authenticated HTTP trigger once a day.
 
-If you use Azure and want to deploy something similar, here's the important bits you'll need in an Azure Resource Group Template. For the Authorization token you'll need to use a Personal Access Token that has write access to the repository you want to trigger:
-
-<details>
-
-```json
-{
-  "comments": "Generalized from resource...",
-  "type": "Microsoft.Scheduler/jobCollections/jobs",
-  "name": "Stale Action HTTP trigger",
-  "apiVersion": "2016-03-01",
-  "scale": null,
-  "properties": {
-      "startTime": "2019-02-27T07:27:30.678Z",
-      "action": {
-          "request": {
-              "uri": "https://api.github.com/repos/:owner/:repo/dispatches",
-              "method": "POST",
-              "headers": {
-                  "Authorization": "Bearer <token>",
-                  "Accept": "application/vnd.github.everest-preview+json",
-                  "Content-Type": "application/json",
-                  "User-Agent": "Stale from Azure"
-              },
-              "body": "{\n  \"event_type\": \"stale\"\n}"
-          },
-          "type": "HTTPS",
-          "retryPolicy": {
-              "retryType": "fixed",
-              "retryInterval": "30.00:00:00",
-              "retryCount": 3
-          }
-      },
-      "recurrence": {
-          "frequency": "day",
-          "count": 7,
-          "interval": 1
-      },
-      "state": "completed"
-  }
-}
-```
-
-</details>
 
 ## License
 
