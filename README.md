@@ -4,7 +4,7 @@
 
 This action is adapted from Probot's [Stale app](https://github.com/probot/stale), built by [@bkeepers](https://github.com/bkeepers), which itself was onspired by @parkr's [auto-reply](https://github.com/parkr/auto-reply#optional-mark-and-sweep-stale-issues) bot that runs @jekyllbot.
 
-It uses [Actions-Toolkit](https://github.com/JasonEtco/actions-toolkit) by [@JasonEtco](https://github.com/JasonEtco) and is built to be scheduled by triggering a `repository_dispatch` HTTP event from an external service, allowing you to customize how often to scan for stale content.
+It uses [Actions-Toolkit](https://github.com/JasonEtco/actions-toolkit) by [@JasonEtco](https://github.com/JasonEtco) and is built to be run by either a `schedule()` or `repository_dispatch` trigger, allowing you to customize how often to scan for stale content.
 
 ## Usage
 
