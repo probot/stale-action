@@ -1,5 +1,6 @@
 ## 🚫Deprecated
-This action was made for a pre-release version of Actions. Please use the official Stale action located at https://github.com/actions/stale
+
+This action was made for a pre-release version of Actions. Please use the official Stale action located at [https://github.com/actions/stale](https://github.com/actions/stale)
 
 ![Build Status](https://action-badges.now.sh/probot/stale-action)
 
